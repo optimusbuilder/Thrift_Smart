@@ -23,11 +23,6 @@ When thrifting or shopping secondhand, it's hard to know if you're getting a goo
 - ⚡ **Instant Verdict** - Clear COP/DROP decision with detailed reasoning
 - 🎨 **Modern UI** - Beautiful glassmorphism design with smooth animations
 
-## 🚀 Demo
-
-https://github.com/user-attachments/assets/your-demo-video.mp4
-
-*(Add a demo video or GIF here)*
 
 ### Example Analysis
 
@@ -49,7 +44,7 @@ find a much newer G7 or G8 model with significantly better performance.
 My Advice: Walk away from this one."
 ```
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Backend
 - **Flask** - Web framework
@@ -70,7 +65,7 @@ My Advice: Walk away from this one."
 - Real-time price comparison engine
 - Verdict decision algorithm
 
-## 📦 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -132,7 +127,7 @@ python app.py
 
 Open your browser to: `http://localhost:5001`
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 thriftsmart-ai/
@@ -146,14 +141,14 @@ thriftsmart-ai/
 └── README.md             # You are here!
 ```
 
-## 🎮 Usage
+##  Usage
 
 1. **Upload a Video** - Record or select a product video (MP4 format supported)
 2. **Enter Store Price** - Type in the asking price
 3. **Click "Check Value"** - Wait 30-60 seconds for analysis
 4. **Get Your Verdict** - See if it's a COP or DROP + hear AI explanation
 
-## 🧪 How It Works
+##  How It Works
 
 ### Architecture Flow
 
@@ -199,7 +194,7 @@ thriftsmart-ai/
    └─> Convert text response to speech
 ```
 
-## 🎨 Features Breakdown
+##  Features Breakdown
 
 ### 1. Video Analysis
 - Supports MP4
@@ -260,7 +255,7 @@ drop_keywords = ['drop', 'pass', 'overpriced', ...]
 
 Edit `system_prompt.py` to change how the AI analyzes products.
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### ChromeDriver Issues
 ```bash
@@ -285,7 +280,7 @@ Make sure you're accessing via `http://localhost:5001` (not `127.0.0.1`)
 - Use supported formats only
 - Check `uploads/` folder permissions
 
-## 📊 Performance
+##  Performance
 
 - **Video Analysis**: ~10-15 seconds
 - **eBay Scraping**: ~5-10 seconds
@@ -307,7 +302,7 @@ Make sure you're accessing via `http://localhost:5001` (not `127.0.0.1`)
 - [ ] Community price database
 - [ ] AR product scanning
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -317,31 +312,31 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+##  Author
 
-**Your Name**
+**Oluwaferanmi Oyelude**
 - GitHub: [@optimusbuilder](https://github.com/optimusbuilder)
 - Email: oyeludeferanmi@gmail.com
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - Google AI for Gemini API
 - ElevenLabs for voice synthesis
 - Anthropic Claude for development assistance
 - The open-source community
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Home Screen
-![Home Screen](/Users/oluwaferanmioyelude/Documents/screenshot.png)
+![Home Screen](/images/screenshot.jpg)
 
 
 ### Analysis Result
-![Result](/Users/oluwaferanmioyelude/Documents/screenshot1)
+![Result](/images/screenshot1.png)
 
 ---
 
