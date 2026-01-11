@@ -345,4 +345,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ⭐ Star this repo if you find it useful!
 
 
-<p align="center">Made with 🔥 by [Your Name] | © 2026</p>
+<p align="center">Made by Oluwaferanmi Oyelude | © 2026</p>
