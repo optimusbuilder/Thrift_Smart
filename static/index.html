@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThriftSmart AI - Your Shopping Copilot</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #888888;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'General Sans', sans-serif;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            padding: 40px 20px;
+        }
+        .background-blob {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(139,92,246,0) 70%);
+            filter: blur(80px);
+            top: -20%;
+            left: -10%;
+            z-index: -1;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob-2 {
+            background: radial-gradient(circle, rgba(236,72,153,0.3) 0%, rgba(139,92,246,0) 70%);
+            top: auto;
+            bottom: -20%;
+            right: -10%;
+            left: auto;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 50px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            z-index: 10;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(to bottom, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        .card, .result-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+        .upload-zone {
+            border: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0,0,0,0.2);
+            margin-bottom: 24px;
+        }
+        .upload-zone:hover {
+            border-color: #fff;
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-2px);
+        }
+        .upload-zone.dragover {
+            border-color: #3b82f6;
+            background: rgba(59,130,246,0.1);
+        }
+        .upload-content h3 {
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+        .upload-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .upload-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        .file-name {
+            margin-top: 15px;
+            color: #10b981;
+            font-weight: 500;
+        }
+        .hidden {
+            display: none;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 10px;
+        }
+        .input-group input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.2rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            border-radius: 12px;
+            border: none;
+            background: white;
+            color: black;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result-card {
+            margin-top: 24px;
+        }
+        .loader {
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .status-indicator.good-deal {
+            background: #000;
+            border: 1px solid #10b981;
+            color: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+        .status-indicator.bad-deal {
+            background: #000;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+        .ai-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .audio-player {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #3b82f6;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .play-btn:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+        .play-btn.playing {
+            background: #ef4444;
+        }
+        .wave-form {
+            flex: 1;
+            height: 30px;
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            border-radius: 4px;
+            opacity: 0.5;
+            position: relative;
+            overflow: hidden;
+        }
+        .wave-form.playing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: wave 2s linear infinite;
+        }
+        @keyframes wave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .error-message {
+            color: #ef4444;
+            padding: 15px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-blob"></div>
+    <div class="background-blob blob-2"></div>
+    <main class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fa-solid fa-robot"></i> ThriftSmart
+            </div>
+            <p class="tagline">Is it a steal or a scam? Upload a video to find out.</p>
+        </header>
+        <div class="card">
+            <input type="file" id="video-upload" accept="video/*" hidden>
+            <div class="upload-zone" id="drop-zone">
+                <div class="upload-content">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <h3>Record or Upload Product Video</h3>
+                    <p>Drag & drop or tap to browse</p>
+                    <div id="file-name" class="file-name hidden"></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="price-input">Store Price ($)</label>
+                <input type="number" id="price-input" placeholder="e.g. 45.00" step="0.01">
+            </div>
+            <button id="analyze-btn" class="btn-primary">
+                <i class="fa-solid fa-magnifying-glass-dollar"></i> Check Value
+            </button>
+        </div>
+        <div id="result-area" class="result-card hidden">
+            <div class="loader hidden" id="loader">
+                <div class="spinner"></div>
+                <p>Scanning eBay markets...</p>
+            </div>
+            <div id="analysis-content" class="hidden">
+                <div class="status-indicator">
+                    <i class="fa-solid fa-check-circle"></i> <span id="verdict-text">Verdict</span>
+                </div>
+                <p class="ai-message" id="ai-message"></p>
+                <div class="audio-player" id="audio-player">
+                    <button class="play-btn" id="play-btn">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <div class="wave-form" id="wave-form"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get Elements
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('video-upload');
+            const fileNameDisplay = document.getElementById('file-name');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const priceInput = document.getElementById('price-input');
+            const resultArea = document.getElementById('result-area');
+            const loader = document.getElementById('loader');
+            const analysisContent = document.getElementById('analysis-content');
+            const verdictBadge = document.querySelector('.status-indicator');
+            const verdictText = document.getElementById('verdict-text');
+            const aiMessage = document.getElementById('ai-message');
+            const audioPlayer = document.getElementById('audio-player');
+            const playBtn = document.getElementById('play-btn');
+            const waveForm = document.getElementById('wave-form');
+
+            let currentAudio = null;
+
+            // Click to upload
+            dropZone.addEventListener('click', (e) => {
+                e.preventDefault();
+                fileInput.click();
+            });
+
+            // File selection
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            function handleFile(file) {
+                console.log("File selected:", file.name);
+                fileNameDisplay.textContent = `Selected: ${file.name}`;
+                fileNameDisplay.classList.remove('hidden');
+                dropZone.style.borderColor = "#10b981";
+            }
+
+            // Play audio
+            playBtn.addEventListener('click', () => {
+                if (currentAudio) {
+                    if (currentAudio.paused) {
+                        currentAudio.play();
+                        playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                        playBtn.classList.add('playing');
+                        waveForm.classList.add('playing');
+                    } else {
+                        currentAudio.pause();
+                        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                        playBtn.classList.remove('playing');
+                        waveForm.classList.remove('playing');
+                    }
+                }
+            });
+
+            // Analyze button
+            analyzeBtn.addEventListener('click', async () => {
+                const price = priceInput.value;
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert('Please select a video file first.');
+                    return;
+                }
+                if (!price || price <= 0) {
+                    alert('Please enter a valid price.');
+                    return;
+                }
+
+                console.log("Starting analysis...");
+                
+                // Disable button
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
+                
+                // Show loader
+                resultArea.classList.remove('hidden');
+                loader.classList.remove('hidden');
+                analysisContent.classList.add('hidden');
+
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('video', file);
+                formData.append('price', price);
+
+                try {
+                    // Make API call to Flask backend (relative URL - no CORS issues)
+                    const response = await fetch('/analyze', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `Server error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log("Analysis complete:", data);
+
+                    // Hide loader & show content
+                    loader.classList.add('hidden');
+                    analysisContent.classList.remove('hidden');
+
+                    // Update verdict UI
+                    if (data.verdict && data.verdict === "COP") {
+                        verdictBadge.className = "status-indicator good-deal";
+                        verdictText.innerHTML = '<i class="fa-solid fa-check-circle"></i> VERDICT: COP';
+                    } else if (data.verdict && data.verdict === "DROP") {
+                        verdictBadge.className = "status-indicator bad-deal";
+                        verdictText.innerHTML = '<i class="fa-solid fa-times-circle"></i> VERDICT: DROP';
+                    } else {
+                        // If no verdict, hide the badge
+                        verdictBadge.style.display = 'none';
+                    }
+
+                    // Update message
+                    aiMessage.innerHTML = `"${data.message}"`;
+
+                    // Handle audio
+                    if (data.audio) {
+                        console.log("Audio data received, creating player...");
+                        // If audio is base64 encoded from backend
+                        try {
+                            const audioBlob = base64ToBlob(data.audio, 'audio/mpeg');
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            currentAudio = new Audio(audioUrl);
+                            
+                            currentAudio.addEventListener('ended', () => {
+                                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                                playBtn.classList.remove('playing');
+                                waveForm.classList.remove('playing');
+                            });
+                            
+                            currentAudio.addEventListener('error', (e) => {
+                                console.error('Audio playback error:', e);
+                                alert('Could not play audio. Check console for details.');
+                            });
+                            
+                            audioPlayer.classList.remove('hidden');
+                            console.log("Audio player ready. Click play button to hear.");
+                            
+                            // Auto-play the audio
+                            setTimeout(() => {
+                                currentAudio.play().catch(err => {
+                                    console.log("Auto-play blocked by browser. Click play button.");
+                                });
+                                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                                playBtn.classList.add('playing');
+                                waveForm.classList.add('playing');
+                            }, 500);
+                            
+                        } catch (audioError) {
+                            console.error("Error creating audio:", audioError);
+                            audioPlayer.classList.add('hidden');
+                        }
+                    } else {
+                        console.log("No audio data received");
+                        audioPlayer.classList.add('hidden');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    loader.classList.add('hidden');
+                    analysisContent.classList.remove('hidden');
+                    analysisContent.innerHTML = `<div class="error-message">
+                        <strong>Error:</strong> ${error.message}
+                    </div>`;
+                } finally {
+                    // Re-enable button
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-dollar"></i> Check Value';
+                }
+            });
+
+            // Helper function to convert base64 to blob
+            function base64ToBlob(base64, contentType) {
+                const byteCharacters = atob(base64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                return new Blob([byteArray], { type: contentType });
+            }
+        });
+    </script>
+</body>
+</html>
